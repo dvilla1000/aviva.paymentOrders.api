@@ -1,0 +1,6 @@
+@Aviva.PaymentOrders.Api_HostAddress = http://localhost:5176
+
+GET {{Aviva.PaymentOrders.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
