@@ -1,5 +1,6 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using Aviva.PaymentOrders.Application.Adapters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<Aviva.PaymentOrders.DataInfrastructure.Repositories.ProductsRepository>();
+builder.Services.AddScoped<Aviva.PaymentOrders.Application.Services.ProductService>();
+
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
     
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
