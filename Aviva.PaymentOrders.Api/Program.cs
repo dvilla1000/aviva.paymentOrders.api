@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<Aviva.PaymentOrders.DataInfrastructure.Repositories.ProductsRepository>();
 builder.Services.AddScoped<Aviva.PaymentOrders.Application.Services.ProductService>();
-
+builder.Services.AddScoped<Aviva.PaymentOrders.DataInfrastructure.Repositories.OrdersRepository>();
+builder.Services.AddScoped<Aviva.PaymentOrders.Application.Services.OrderService>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
     

@@ -10,6 +10,8 @@ namespace Aviva.PaymentOrders.Application.Adapters
         {
             CreateMap<Product, ProductDTO>()
                 .ReverseMap();
+            CreateMap<PaymentOrder, OrderDTO>()
+                .ReverseMap();
         }
     }
 }
