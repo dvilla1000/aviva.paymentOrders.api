@@ -1,6 +1,8 @@
 using Aviva.PaymentOrders.Domain.Contracts;
 using Aviva.PaymentOrders.Domain.Entities;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
@@ -13,24 +15,59 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
         // In a real application, this would connect to a database.
         protected List<T> data = new List<T>();
 
-        public Task<IEnumerable<T>> GetAllAsync() => Task.FromResult<IEnumerable<T>>(data.Where(p => p != null).Cast<T>());
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            // Simulating asynchronous operation
+            await Task.Delay(100); // Simulate some delay
+            return await Task.Run(() => data.Where(p => p != null).Cast<T>());
+        }
 
-        public Task<T> GetByIdAsync(int id) => Task.FromResult(data.FirstOrDefault(p => p.Id == id));
+        public async Task<T> GetByIdAsync(int id)
+        {
+            // Simulating asynchronous operation
+            await Task.Delay(100); // Simulate some delay
+            // Use Task.Run to offload the search to a separate thread
+            var entity = await Task.Run(() => data.FirstOrDefault(p => p.Id == id));
+            if (entity == null)
+            {
+                throw new KeyNotFoundException($"Entity with ID {id} not found.");
+            }
+            return entity;
+        }
 
-        public Task AddAsync(T entity)
+        public async Task AddAsync(T entity)
         {
             data.Add(entity);
+            // Simulating asynchronous operation
+            await Task.CompletedTask;
+            // return Task.CompletedTask;
+        }
+        public Task UpdateAsync(T entity) 
+        {
+            // Find the existing entity by ID
+            var existingEntity = data.FirstOrDefault(p => p.Id == entity.Id);
+            if (existingEntity != null)
+            {
+                // Update the existing entity's properties
+                existingEntity = entity;
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Entity with ID {entity.Id} not found.");
+            }
+            // Simulating asynchronous operation
             return Task.CompletedTask;
         }
-        public Task UpdateAsync(T entity) => throw new NotImplementedException();
-        public Task DeleteAsync(int id) 
+        
+        public async Task DeleteAsync(int id)
         {
-            var entity = data.FirstOrDefault(p => p.Id == id);
+            // var entity = data.FirstOrDefault(p => p.Id == id);
+            var entity = await Task.Run(() => data.FirstOrDefault(p => p.Id == id));
             if (entity != null)
             {
                 data.Remove(entity);
             }
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
     }
 }

@@ -1,5 +1,3 @@
-using Aviva.PaymentOrders.Domain.Entities;
-
 namespace Aviva.PaymentOrders.Application.Adapters
 {
     // ProductDTO is a Data Transfer Object (DTO) for the Product entity.
