@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Aviva.PaymentOrders.Domain.Entities
 {
     public class PaymentOrder : Entity
@@ -6,6 +8,6 @@ namespace Aviva.PaymentOrders.Domain.Entities
         public string Status { get; set; } // Status of the order, e.g., "Pending", "Completed", "Cancelled"
         public int OrderIdProvider { get; set; } // OrderId from Provider API
         public string ProviderRef { get; set; } // Provider is a string representing the payment provider
-        public List<Product> Products { get; set; } // Navigation property to Product entity
+        public ICollection<PaymentOrderDetail> PaymentOrderDetails { get; set; } // Navigation property to PaymentOrderDetail entity
     }
 }

@@ -7,6 +7,6 @@ namespace Aviva.PaymentOrders.Application.Adapters
         public int Id { get; set; }
         public string PaymentMethod { get; set; }
         public string Status { get; set; } // Status of the order, e.g., "Pending", "Completed", "Cancelled"
-        public List<ProductDTO> Products { get; set; } // Navigation property to ProductDTO
+        public ICollection<OrderDetailDTO> Products { get; set; } // Navigation property to OrderDetailDTO
     }
 }

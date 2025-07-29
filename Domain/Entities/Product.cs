@@ -8,5 +8,7 @@ namespace Aviva.PaymentOrders.Domain.Entities
         public decimal UnitPrice { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }
+
+        public ICollection<PaymentOrderDetail> PaymentOrderDetails { get; set; } // Navigation property to PaymentOrderDetail entity
     }
 }

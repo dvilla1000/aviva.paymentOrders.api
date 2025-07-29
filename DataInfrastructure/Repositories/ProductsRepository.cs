@@ -1,3 +1,4 @@
+using Aviva.PaymentOrders.DataInfrastructure.Data;
 using Aviva.PaymentOrders.Domain.Contracts;
 using Aviva.PaymentOrders.Domain.Entities;
 using System.Collections.Generic;
@@ -10,9 +11,11 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
     {
         // This is a simple in-memory storage for demonstration purposes.
         // In a real application, this would connect to a database.
-        public ProductsRepository()
+        public ProductsRepository(InMemoryContext context) : base(context)
         {
+            
             // Initialize the products array with some sample data
+            /*
             for (int i = 0; i < 100; i++)
             {
                 var product = new Product
@@ -26,6 +29,7 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
                 };
                 data.Add(product);
             }
+            */
 
         }
     }

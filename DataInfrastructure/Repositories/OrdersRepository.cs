@@ -1,3 +1,4 @@
+using Aviva.PaymentOrders.DataInfrastructure.Data;
 using Aviva.PaymentOrders.Domain.Contracts;
 using Aviva.PaymentOrders.Domain.Entities;
 using System.Collections.Generic;
@@ -10,9 +11,11 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
     {
         // This is a simple in-memory storage for demonstration purposes.
         // In a real application, this would connect to a database.
-        public OrdersRepository()
+        public OrdersRepository(InMemoryContext context) : base(context)
         {
-            // Initialize the products array with some sample data
+            // Initialize the orders array with some sample data
+            // This can be overridden in derived classes
+            /*
             for (int i = 0; i < 100; i++)
             {
                 var order = new PaymentOrder
@@ -22,20 +25,16 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
                     Status = i % 3 == 0 ? "Pending" : (i % 3 == 1 ? "Completed" : "Cancelled"),
                     OrderIdProvider = i + 1000, // Example OrderId from Provider API
                     ProviderRef = i % 3 == 0 ? "PagaFacil" : (i % 3 == 1 ? "CazaPagos" : "Transferencia"), // Example provider reference
-                    Products = new List<Product>()
+                    Products = new List<PaymentOrderDetail>()
                         {
-                            new Product() { Id = 1, Name=$"Product  1", UnitPrice=1000, Description="Description for Product 1", Status="Available" },
-                            new Product() { Id = 2, Name=$"Product  2", UnitPrice=2000, Description="Description for Product 2", Status="Available" },
-                            new Product() { Id = 3, Name=$"Product  3", UnitPrice=6000, Description="Description for Product 3", Status="Available" }
-                        }// Assuming Product is a valid entity
-                    // Name = $"Product {i + 1}",
-                    // UnitPrice = (decimal)(10 + i * 5),
-                    // Description = $"Description for Product {i + 1}",
-                    // Status = i % 2 == 0 ? "Available" : "Not Available",
+                            new PaymentOrderDetail() { Id = 1, UnitPrice=1000, Quantity=2, ProductId=1 },
+                            new PaymentOrderDetail() { Id = 2, UnitPrice=2000, Quantity=1, ProductId=2 },
+                            new PaymentOrderDetail() { Id = 3, UnitPrice=6000, Quantity=3, ProductId=3 }
+                        }
                 };
                 data.Add(order);
             }
-
+            */
         }
 
         public async Task CancelOrderAsync(int id)
