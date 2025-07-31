@@ -1,6 +1,7 @@
 using Aviva.PaymentOrders.DataInfrastructure.Data;
 using Aviva.PaymentOrders.Domain.Contracts;
 using Aviva.PaymentOrders.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,7 +12,8 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
     {
         // This is a simple in-memory storage for demonstration purposes.
         // In a real application, this would connect to a database.
-        public ProductsRepository(InMemoryContext context) : base(context)
+        public ProductsRepository(InMemoryContext context, ILogger<GenericCRUDRepository<Product>> logger) 
+            : base(context, logger)
         {
             
             // Initialize the products array with some sample data
