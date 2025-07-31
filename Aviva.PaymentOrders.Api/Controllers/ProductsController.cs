@@ -116,9 +116,6 @@ namespace Aviva.PaymentOrders.Api.Controllers
             // Validate the id
             if (id <= 0)
                 return BadRequest("Invalid product ID.");
-            // If the product was successfully deleted, return NoContent
-            return NoContent();
-            
             try
             {
                 // Logic to delete a specific product by id

@@ -16,15 +16,11 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
     {
         // This is a simple in-memory storage for demonstration purposes.
         // In a real application, this would connect to a database.
-        // protected List<T> data = new List<T>();
-
         private readonly InMemoryContext _context;
         private DbSet<T> dbSet;
 
         public GenericCRUDRepository(InMemoryContext context)
         {
-            // Initialize the data list with some sample data if needed
-            // This can be overridden in derived classes
             _context = context;
             this.dbSet = context.Set<T>();
         }
@@ -32,11 +28,9 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             // Simulating asynchronous operation
-            // await Task.Delay(100); // Simulate some delay
             IQueryable<T> query = dbSet;
             query = query.Where(p => p != null && p.Id > 0); // Ensure we only return entities with valid IDs
             return await query.ToListAsync();
-            // return await Task.Run(() => data.Where(p => p != null).Cast<T>());
         }
 
         public async Task<T> GetByIdAsync(int id)
@@ -48,12 +42,7 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
                     throw new ValidationException("Invalid entity ID.");
                 }
                 IQueryable<T> query = dbSet;
-                // query = query.Where(p => p.Id == id);
                 var entity = await query.FirstOrDefaultAsync(p => p.Id == id);
-                // if (entity == null)
-                // {
-                //     throw new KeyNotFoundException($"Entity with ID {id} not found.");
-                // }
                 return entity;
             }
             catch (KeyNotFoundException ex)
@@ -62,11 +51,6 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
             }
             catch (Exception ex)
             {
-                // Handle exceptions and return a meaningful error message
-                // You can log the exception or rethrow it as needed
-                // For now, we will just throw a new exception with the message
-                // return Task.FromResult(_mapper.Map<T>(entity));
-                // return Task.FromResult(_mapper.Map<T>(entity));
                 throw new Exception($"Internal server error: {ex.Message}");
             }
 
