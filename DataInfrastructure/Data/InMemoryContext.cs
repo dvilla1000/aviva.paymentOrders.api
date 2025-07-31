@@ -8,10 +8,9 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Data
     {
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // Use an in-memory database for testing
+            // Use an in-memory database
             options.UseInMemoryDatabase("avivaDb");
             options.EnableSensitiveDataLogging(); // Enable sensitive data logging for debugging purposes
-            // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // Use NoTracking for better performance in read-only scenarios
         }
 
         public DbSet<Product> Products { get; set; }

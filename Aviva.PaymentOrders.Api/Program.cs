@@ -13,6 +13,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+
+builder.Services.AddHttpClient<Aviva.PaymentOrders.DataInfrastructure.ServiceAgents.PaymentOrders.PagaFacilProvider>(client =>
+{
+    client.BaseAddress = new Uri("https://app-paga-chg-aviva.azurewebsites.net");
+    client.DefaultRequestHeaders.Add("x-api-key", "apikey-1cnmoisyhkif3s");
+});
+
+builder.Services.AddHttpClient<Aviva.PaymentOrders.DataInfrastructure.ServiceAgents.PaymentOrders.CazaPagosProvider>(client =>
+{
+    client.BaseAddress = new Uri("https://app-caza-chg-aviva.azurewebsites.net");
+    client.DefaultRequestHeaders.Add("x-api-key", "apikey-1cnmoisyhkif3s");
+});
+
+builder.Services.AddScoped<Aviva.PaymentOrders.DataInfrastructure.ServiceAgents.PaymentOrders.IPaymentProviderFactory, Aviva.PaymentOrders.DataInfrastructure.ServiceAgents.PaymentOrders.PaymentProviderFactory>();
 builder.Services.AddScoped<Aviva.PaymentOrders.DataInfrastructure.Repositories.ProductsRepository>();
 builder.Services.AddScoped<Aviva.PaymentOrders.Application.Services.ProductService>();
 builder.Services.AddScoped<Aviva.PaymentOrders.DataInfrastructure.Repositories.OrdersRepository>();

@@ -15,12 +15,13 @@ namespace Aviva.PaymentOrders.Application.Adapters
                 .ReverseMap();
 
             CreateMap<PaymentOrderDetail, OrderDetailDTO>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => src.Product.Description))
                 .ReverseMap();
 
             // CreateMap<PaymentOrderDetail, OrderDetailDTO>()
             //     .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
             //     .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => src.Product.Description))
-            //     .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
 
             CreateMap<OrderDetailDTO, PaymentOrderDetail>()
                 .ForMember(dest => dest.Product, opt => opt.Ignore())

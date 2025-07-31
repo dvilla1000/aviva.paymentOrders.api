@@ -134,8 +134,8 @@ namespace Aviva.PaymentOrders.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/orders/cancel/5
-        [HttpPost("cancel/{id}")]
+        // PUT: api/orders/cancel/5
+        [HttpPut("cancel/{id}")]
         public async Task<IActionResult> CancelOrder(int id)
         {
             // Logic to cancel a specific order by id
@@ -156,8 +156,8 @@ namespace Aviva.PaymentOrders.Api.Controllers
             }
         }
 
-        // POST: api/orders/pay/5
-        [HttpPost("pay/{id}")]
+        // PUT: api/orders/pay/5
+        [HttpPut("pay/{id}")]
         public async Task<IActionResult> PayOrder(int id)
         {
             // Logic to pay a specific order by id

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Aviva.PaymentOrders.DataInfrastructure.ServiceAgents.PaymentOrders;
+using System.Text.Json;
 
 namespace Aviva.PaymentOrders.Application.Services
 {
@@ -16,11 +18,13 @@ namespace Aviva.PaymentOrders.Application.Services
     {
         private readonly OrdersRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IPaymentProviderFactory _paymentProviderFactory;
 
-        public OrderService(OrdersRepository repository, IMapper mapper)
+        public OrderService(OrdersRepository repository, IMapper mapper, IPaymentProviderFactory paymentProviderFactory)
         {
             _repository = repository;
             _mapper = mapper;
+            _paymentProviderFactory = paymentProviderFactory;
         }
 
         // GetAllOrdersAsync retrieves all Orders and maps them to a list of OrderDTO.
@@ -76,17 +80,15 @@ namespace Aviva.PaymentOrders.Application.Services
                     throw new ValidationException("Order must have at least one product.");
                 if (string.IsNullOrEmpty(orderDTO.PaymentMethod))
                     throw new ValidationException("Payment method is required.");
-                // if (string.IsNullOrEmpty(orderDTO.Status))
-                //     throw new ValidationException("Order status is required.");
+                                
                 orderDTO.Status = "Pending"; // Default status for new orders
                 var order = _mapper.Map<PaymentOrder>(orderDTO);
-                // Process the order in external api before adding it to the repository
-                //*********TODO: Implement external API call to process the order*********
-                //TODO: Implement logic to select the payment provider based on the order details
-                // For now, we will just set some dummy values
-                order.ProviderRef = "PagaFacil"; // This should be set based on the actual provider logic
-                order.OrderIdProvider = 12345; // This should be set based on the actual
-                order.Status = "Completed"; // Set the status to Completed after processing
+                IPaymentProvider paymentProvider = _paymentProviderFactory.CreatePaymentProvider(order); // Create the payment provider based on the order details
+                PaymentOrderExternal orderExternal = await paymentProvider.CreatePaymentOrderAsync(order);
+                order.ProviderName = paymentProvider.ProviderName; 
+                order.OrderIdProvider = orderExternal.OrderId; 
+                order.Status = orderExternal.Status;
+                order.ProviderRef = JsonSerializer.Serialize(orderExternal); // Store the response from the payment provider.
                 // Add the order to the repository
                 order = await _repository.AddAsync(order);
                 orderDTO = _mapper.Map<OrderDTO>(order);
@@ -151,6 +153,12 @@ namespace Aviva.PaymentOrders.Application.Services
                     throw new KeyNotFoundException($"Order with ID {id} not found.");
                 }
                 // Logic to cancel the order
+                IPaymentProvider paymentProvider = _paymentProviderFactory.CreatePaymentProvider(order.ProviderName); // Create the payment provider based on the name
+                HttpResponseMessage msj = await paymentProvider.CancelPaymentOrderAsync(order.OrderIdProvider);
+                if (!msj.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Failed to cancel payment order with ID {id}. Status code: {msj.StatusCode}");
+                }
                 order.Status = "Cancelled"; // Update the status to Cancelled
                 await _repository.UpdateAsync(order); // Save the changes
                 return _mapper.Map<OrderDTO>(order);
@@ -177,8 +185,12 @@ namespace Aviva.PaymentOrders.Application.Services
                     throw new KeyNotFoundException($"Order with ID {id} not found.");
                 }
                 // Logic to process payment for the order
-                //TODO: Implement external API call to process the payment
-                // For now, we will just set some dummy values                
+                IPaymentProvider paymentProvider = _paymentProviderFactory.CreatePaymentProvider(order.ProviderName); // Create the payment provider based on the name
+                HttpResponseMessage msj = await paymentProvider.PayPaymentOrderAsync(order.OrderIdProvider);
+                if (!msj.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Failed to cancel payment order with ID {id}. Status code: {msj.StatusCode}");
+                }
                 order.Status = "Paid"; // Update the status to Paid
                                        // Process the payment in external api before updating the order
                 await _repository.UpdateAsync(order); // Save the changes
