@@ -105,38 +105,6 @@ namespace Aviva.PaymentOrders.Application.Services
             }
         }
 
-        // UpdateOrderAsync updates an existing Order in the repository.
-        public async Task UpdateOrderAsync(OrderDTO orderDTO)
-        {
-            try
-            {
-                if (orderDTO == null)
-                    throw new ValidationException("Order data is null.");
-                // Validate the order ID
-                if (orderDTO.Id <= 0)
-                    throw new ValidationException("Order ID must be greater than zero.");
-
-                // Validate the order data
-                if (orderDTO.Products == null || !orderDTO.Products.Any())
-                    throw new ValidationException("Order must have at least one product.");
-                if (string.IsNullOrEmpty(orderDTO.PaymentMethod))
-                    throw new ValidationException("Payment method is required.");
-                orderDTO.Status = "Pending"; // Default status for updated orders
-                // Map the OrderDTO to a Order entity
-                var order = _mapper.Map<PaymentOrder>(orderDTO);
-                // Update the existing order in the repository
-                await _repository.UpdateAsync(order);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                throw new KeyNotFoundException(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Internal server error: {ex.Message}");
-            }
-        }
-
         // DeleteOrderAsync deletes a Order by its ID from the repository.
         // It does not return any value.
         public async Task DeleteOrderAsync(int id) => await _repository.DeleteAsync(id);
@@ -153,6 +121,7 @@ namespace Aviva.PaymentOrders.Application.Services
                     throw new KeyNotFoundException($"Order with ID {id} not found.");
                 }
                 // Logic to cancel the order
+                // Process the cancellation in external api before updating the order
                 IPaymentProvider paymentProvider = _paymentProviderFactory.CreatePaymentProvider(order.ProviderName); // Create the payment provider based on the name
                 HttpResponseMessage msj = await paymentProvider.CancelPaymentOrderAsync(order.OrderIdProvider);
                 if (!msj.IsSuccessStatusCode)
@@ -185,6 +154,7 @@ namespace Aviva.PaymentOrders.Application.Services
                     throw new KeyNotFoundException($"Order with ID {id} not found.");
                 }
                 // Logic to process payment for the order
+                // Process the payment in external api before updating the order
                 IPaymentProvider paymentProvider = _paymentProviderFactory.CreatePaymentProvider(order.ProviderName); // Create the payment provider based on the name
                 HttpResponseMessage msj = await paymentProvider.PayPaymentOrderAsync(order.OrderIdProvider);
                 if (!msj.IsSuccessStatusCode)
@@ -192,7 +162,6 @@ namespace Aviva.PaymentOrders.Application.Services
                     throw new Exception($"Failed to cancel payment order with ID {id}. Status code: {msj.StatusCode}");
                 }
                 order.Status = "Paid"; // Update the status to Paid
-                                       // Process the payment in external api before updating the order
                 await _repository.UpdateAsync(order); // Save the changes
                 return _mapper.Map<OrderDTO>(order);
             }

@@ -90,15 +90,8 @@ namespace Aviva.PaymentOrders.DataInfrastructure.Repositories
         {
             // Find the existing entity by ID
             IQueryable<T> query = dbSet;
-            var existingEntity = await query.FirstOrDefaultAsync(p => p.Id == entity.Id);
-            if (existingEntity == null)
-            {
-                throw new KeyNotFoundException($"Entity with ID {entity.Id} not found.");
-            }
-            // Update the existing entity's properties
-            existingEntity = entity;
             // Update the entity in the DbSet
-            dbSet.Update(existingEntity);
+            dbSet.Update(entity);
             // Save changes to the context
             await _context.SaveChangesAsync();
         }

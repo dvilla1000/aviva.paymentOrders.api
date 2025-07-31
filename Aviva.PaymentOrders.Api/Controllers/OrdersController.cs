@@ -84,32 +84,6 @@ namespace Aviva.PaymentOrders.Api.Controllers
             }
         }
 
-        // PUT: api/orders/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderDTO order)
-        {
-            try
-            {
-                // Logic to update a specific order by id
-                if (id != order.Id)
-                    return BadRequest("Order ID mismatch.");
-                // var existingOrder = await _orderService.GetOrderByIdAsync(id);
-                // if (existingOrder == null)
-                //     return NotFound();
-                await _orderService.UpdateOrderAsync(order);
-            }
-            catch(ValidationException ex)
-            {
-                // Return a BadRequest with validation errors
-                return BadRequest($"Validation error: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
-            }
-            return NoContent();
-        }
-
         // DELETE: api/orders/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
